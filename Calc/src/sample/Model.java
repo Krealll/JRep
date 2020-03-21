@@ -7,12 +7,14 @@ import java.math.RoundingMode;
 import static java.math.RoundingMode.*;
 
 public class Model {
-
+    final int ALLOWED_SCALE=10;
     private View view;
     private String mathOperator = "+";
-    private StringBuffer firstNum = new StringBuffer("");
-    private StringBuffer secondNum = new StringBuffer("");
-    private boolean lastBtnWasNum = true,doubleProcessing;
+    private String firstNum = String.valueOf("");
+    private String secondNum = String.valueOf("");
+    private boolean lastBtnWasNum = true,
+                    doubleProcessing,
+                    UnOperatorWasPushed;
 
     public Model(View view){
         this.view=view;
@@ -20,25 +22,29 @@ public class Model {
 
 
     public String processNum(String numb){
-        if(numb.contains(",")){
-            numb.replace(",",".");
-        }
         if (lastBtnWasNum) {
-            firstNum.append(numb);
-            numb=firstNum.toString();
+            if(numb.contains(",")){
+                numb.replace(",",".");
+            }else if(firstNum.equals("0"))
+                firstNum="";
+            firstNum=firstNum.concat(numb);
+            numb=firstNum;
         }
         else
         {
-            secondNum.append(numb);
-            numb=firstNum.toString()+mathOperator+secondNum;
+            secondNum=secondNum.concat(numb);
+            numb=firstNum+mathOperator+secondNum;
         }
+        System.out.println(lastBtnWasNum);
         return numb;
 
     }
 
     public String processBinOp(String string){
         lastBtnWasNum=false;
-        secondNum.delete(0,secondNum.length());
+        if(firstNum.length()==0)
+            firstNum=firstNum.concat("0");
+        secondNum="";
         switch (string){
             case "+":
                 mathOperator="+";
@@ -53,6 +59,7 @@ public class Model {
                 mathOperator="*";
                 break;
         }
+        System.out.println(lastBtnWasNum);
         return firstNum+mathOperator;
     }
 
@@ -66,31 +73,33 @@ public class Model {
 
     public String del(String string){
         if (string.length()>firstNum.length()+1){
-            secondNum.delete(secondNum.length()-1,secondNum.length());
+            secondNum=secondNum.substring(0,secondNum.length()-1);
             if(secondNum.length()==0)
                 lastBtnWasNum=false;
         }
         else if (string.length()==firstNum.length()+1){
             mathOperator="";
+            lastBtnWasNum=true;
         }
         else{
-            firstNum.delete(firstNum.length()-1,firstNum.length());
+            firstNum=firstNum.substring(0,firstNum.length()-1);
+            lastBtnWasNum=true;
         }
         string= removeLastSymbol(string);
         if (string.length()==0){
-            firstNum.delete(0,firstNum.length());
-            secondNum.delete(0,secondNum.length());
+            firstNum="";
+            secondNum="";
             mathOperator="";
             lastBtnWasNum=true;
             return "0";
         }
-        lastBtnWasNum=true;
+        System.out.println(lastBtnWasNum);
         return string;
     }
 
     public String Cdel(){
-        firstNum.delete(0,firstNum.length());
-        secondNum.delete(0,secondNum.length());
+        firstNum="";
+        secondNum="";
         mathOperator="";
         lastBtnWasNum=true;
         return "0";
@@ -101,7 +110,7 @@ public class Model {
         boolean thereIsAnOperator=false;
         char[] str=string.toCharArray();
         char[] DelimitedString= new char[]{'+','-','*','/'}; //MORE TO ADD
-  outMark:
+    outMark:
         for (i = 0; i <string.length() ; i++) {
             for (int j = 0; j <DelimitedString.length; j++) {
                 if(str[i]==DelimitedString[j]) {
@@ -115,29 +124,32 @@ public class Model {
             lastBtnWasNum=false;
             i++;
             if (i < str.length) {
-                secondNum.delete(0,secondNum.length());
+                secondNum="";
                 return string.substring(0, i)
                              .concat("0");
             }
             return string.concat("0");
         }
-        firstNum.delete(0,firstNum.length());
+        firstNum="";
         return "0";
     }
 
     public String getResult(String text){
+        if ((text.equals("0")||secondNum.length()==0)&&!UnOperatorWasPushed){
+            return text;
+        }
         lastBtnWasNum=true;
         BigDecimal num1;
         BigDecimal num2;
-        if (text.contains(".")||mathOperator=="/") {
+        if (text.contains(".")|| mathOperator.equals("/")) {
             doubleProcessing=true;
-            num1 = new BigDecimal(Double.parseDouble(firstNum.toString())).setScale(20, RoundingMode.HALF_EVEN);
-            num2 = new BigDecimal(Double.parseDouble(secondNum.toString())).setScale(20, RoundingMode.HALF_EVEN);
+            num1 = new BigDecimal(Double.parseDouble(firstNum)).setScale(20, RoundingMode.HALF_EVEN);
+            num2 = new BigDecimal(Double.parseDouble(secondNum)).setScale(20, RoundingMode.HALF_EVEN);
         }
         else{
             doubleProcessing=false;
-            num1=new BigDecimal(Integer.parseInt(firstNum.toString()));
-            num2=new BigDecimal(Integer.parseInt(secondNum.toString()));
+            num1=new BigDecimal(firstNum);
+            num2=new BigDecimal(secondNum);
         }
 
         switch (mathOperator){
@@ -148,10 +160,13 @@ public class Model {
                     text=num1.subtract(num2).toString();
                 break;
             case "*":
-                    text=num1.multiply(num2).toString();
+                    num1=num1.multiply(num2);
+                    if(num1.scale()>ALLOWED_SCALE)
+                        num1=num1.setScale(ALLOWED_SCALE,UP);
+                    text=num1.toString();
                 break;
             case "/":
-                    num1=num1.divide(num2,HALF_EVEN);
+                    num1=num1.divide(num2,ALLOWED_SCALE,HALF_EVEN);
                     text=num1.toString();
                 break;
         }
@@ -165,11 +180,11 @@ public class Model {
         }
         // ADD if not user input and num of symbols after . >8
         //      round result
-        //      
-        firstNum.delete(0,firstNum.length());
-        firstNum.append(text);
-        secondNum.delete(0,secondNum.length());
+        firstNum="";
+        firstNum=firstNum.concat(text);
+        secondNum="";
         mathOperator="";
+        System.out.println(lastBtnWasNum);
         return text;
     }
 }

@@ -4,15 +4,17 @@ import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 
 public class Controller implements View { //HERE IS TEXT VALIDATION
 
     @FXML
-    private TextField textField= new TextField("0");
+    private TextArea textArea = new TextArea("0");
     private Model model;
+    private boolean onlyOperatorAllowed,
+                    newLine,
+                    stopFlag;
     public Controller(){
         model=new Model(this);
     }
@@ -23,18 +25,19 @@ public class Controller implements View { //HERE IS TEXT VALIDATION
         String del  = button.getText();
         switch (del) {
             case "C":
-                del = model.Cdel();
-                textField.setText(del);
+                newLine=false;
+                setView(model.Cdel());
                 break;
             case "CE":
-                del=textField.getText();
-                del=model.CEdel(del);
-                textField.setText(del);
+                model.CEdel(getView());
+                setView(del);
                 break;
             case "◄":
-                del =textField.getText();
+                del =getView();
+                if (del.length()<=20)
+                    newLine=false;
                 del = model.del(del);
-                textField.setText(del);
+                setView(del);
                 break;
         }
     }
@@ -43,14 +46,14 @@ public class Controller implements View { //HERE IS TEXT VALIDATION
     private void onActionBtnNum(ActionEvent event){
         Button button = (Button)event.getSource();
         String num=button.getText();
-        textField.setText(model.processNum(num));
+        setView(model.processNum(num));
     }
 
     @FXML
     private void onActionBtnBinOperator(ActionEvent event){
         Button button = (Button)event.getSource();
         String num=button.getText();
-        textField.setText(model.processBinOp(num));
+        setView(model.processBinOp(num));
     }
 
     @FXML
@@ -62,28 +65,74 @@ public class Controller implements View { //HERE IS TEXT VALIDATION
 
     @FXML
     private void onActionBtnEqu(ActionEvent event){
-        textField.setText(model.getResult(textField.getText()));
+        String temp =model.getResult(getView());
+        newLine=false;
+        if(temp.length()>19){
+            model.Cdel();
+            temp="ERROR:BIG_NUMBER";
+        }
+        setView(temp);
     }
 
     @Override
     public String getView(){
-        return textField.getText();
+        String string=textArea.getText();
+        string=string.replace("\n","");
+        if(string.length()>39){
+          stopFlag=true;
+        }
+        if (string.length()==19){
+            onlyOperatorAllowed =true;
+            if(!(string.charAt(18)>='0'&&string.charAt(18)<='9')){
+                onlyOperatorAllowed=false;
+                newLine=true;
+            }
+        }
+        else {
+            onlyOperatorAllowed =false;
+        }
+
+        return  string;
     }
 
     @Override
     public void setView(String string){
-        textField.setText(string);
+        if (string.length()>19&&onlyOperatorAllowed){
+            switch (string.charAt(string.length()-1)){
+                case '*':
+                case '/':
+                case '+':
+                case '-':
+                onlyOperatorAllowed =false;
+                newLine=true;
+                break;
+                default:
+            }
+        }
+        if(newLine){
+            if(string.charAt(18)>='0'&&string.charAt(18)<='9'){
+                string=string.substring(0,20)+"\n"+string.substring(20);
+            }
+            else {
+                string=string.substring(0,19)+"\n"+string.substring(19);
+            }
+        }
+        System.out.println(string);
+        textArea.setText(string);
     }
 
 
-    @FXML  // <== perhaps you had this missing??
+    @FXML
     void keyPressed(KeyEvent event) {
+        String temp = getView();
         switch (event.getCharacter()) {
             case"\u007F":
-                textField.setText(model.CEdel(textField.getText()));
+                newLine=false;
+                setView(model.CEdel(temp));
                 break;
             case"C":
-                textField.setText(model.Cdel());
+                newLine=false;
+                setView(model.Cdel());
                 break;
             case "0":
             case "1":
@@ -95,23 +144,32 @@ public class Controller implements View { //HERE IS TEXT VALIDATION
             case "7":
             case "8":
             case "9":
-              textField.setText(model.processNum(event.getCharacter()));
+                if(!onlyOperatorAllowed)
+                setView(model.processNum(event.getCharacter()));
               break;
             case "+":
             case "-":
             case "*":
             case "/":
-                textField.setText(model.processBinOp(event.getCharacter()));
+                setView(model.processBinOp(event.getCharacter()));
                 break;
             case "=":
             case "\r":
-                textField.setText(model.getResult(textField.getText()));
+                temp =model.getResult(temp);
+                newLine=false;
+                if(temp.length()>19){
+                    model.Cdel();
+                    temp="ERROR:BIG_NUMBER";
+                }
+                setView(temp);
                 break;
             case"\b":
-                textField.setText(model.del(textField.getText()));
+                if (temp.length()<=20)
+                    newLine=false;
+                setView(model.del(temp));
                 break;
             default:
-                textField.setText("NONE");
+                setView("NONE");
                 break;
         }
     }
