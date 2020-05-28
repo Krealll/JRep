@@ -1,0 +1,12 @@
+2020-05-28 03:37:09,724 [INFO] com.krealll.restservice.service.DivisionService [http-nio-8080-exec-1]
+Successful division:dividend 5 divider 3
+
+2020-05-28 03:37:09,725 [INFO] com.krealll.restservice.service.DivisionCacher [http-nio-8080-exec-1]
+Added new element with key: 5_3
+
+2020-05-28 03:37:11,740 [INFO] com.krealll.restservice.service.DivisionService [http-nio-8080-exec-3]
+Successful division:dividend 5 divider 3
+
+2020-05-28 03:37:11,741 [INFO] com.krealll.restservice.service.DivisionCacher [http-nio-8080-exec-3]
+Returned existing division: 5_3
+

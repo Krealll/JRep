@@ -9,11 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+
+@Deprecated
 public class MethodNotSupportedExceptionHandler implements ExceptionMapper<MethodNotSupportedException> {
 
         private static Logger logger = LogManager.getLogger(MethodNotSupportedExceptionHandler.class);
 
+        @Deprecated
         @Override
         @ExceptionHandler(MethodNotSupportedException.class)
         public ResponseEntity<?> handle (MethodNotSupportedException e){

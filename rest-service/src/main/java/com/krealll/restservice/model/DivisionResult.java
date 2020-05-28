@@ -1,19 +1,19 @@
 package com.krealll.restservice.model;
 
 public class DivisionResult {
-    private int quotient;
-    private int reminder;
+    private Integer quotient;
+    private Integer reminder;
 
     public DivisionResult( int quotient, int reminder){
         this.quotient=quotient;
         this.reminder=reminder;
     }
 
-    public int getQuotient() {
+    public Integer getQuotient() {
         return quotient;
     }
 
-    public int getReminder() {
+    public Integer getReminder() {
         return reminder;
     }
 
