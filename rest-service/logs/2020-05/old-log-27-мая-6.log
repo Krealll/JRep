@@ -1,3 +1,6 @@
-2020-05-27 17:11:32,573 [INFO] com.krealll.restservice.service.DivisionService [main]
-Successful division:dividend 21 divider 6
+2020-05-27 18:49:49,932 [INFO] com.krealll.restservice.service.DivisionService [http-nio-8080-exec-4]
+Successful division:dividend 9 divider 2
+
+2020-05-27 18:49:55,800 [INFO] com.krealll.restservice.service.DivisionCacher [http-nio-8080-exec-4]
+Added new element with key: 9_2
 

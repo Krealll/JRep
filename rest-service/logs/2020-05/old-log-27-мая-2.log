@@ -1,3 +1,9 @@
-2020-05-27 17:01:07,319 [INFO] com.krealll.restservice.service.DivisionService [main]
-Successful division:dividend 21 divider 6
+2020-05-27 18:39:55,715 [INFO] com.krealll.restservice.service.DivisionService [http-nio-8080-exec-2]
+Successful division:dividend 9 divider 2
+
+2020-05-27 18:40:01,169 [INFO] com.krealll.restservice.service.DivisionService [http-nio-8080-exec-5]
+Successful division:dividend 9 divider 2
+
+2020-05-27 18:40:02,401 [INFO] com.krealll.restservice.service.DivisionService [http-nio-8080-exec-7]
+Successful division:dividend 9 divider 2
 

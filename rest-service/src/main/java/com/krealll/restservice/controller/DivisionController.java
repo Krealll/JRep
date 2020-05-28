@@ -5,6 +5,7 @@ import com.krealll.restservice.application.exceptions.BadArgumentsException;
 import com.krealll.restservice.application.exceptions.MethodNotSupportedException;
 import com.krealll.restservice.application.exceptions.ServerException;
 import com.krealll.restservice.service.DivisionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class DivisionController {
 
-    DivisionService service = new DivisionService();
+    @Autowired
+    DivisionService service;
+
     @GetMapping("/divide")
     public ResponseEntity<?> division(@RequestParam(value = "dividend",required = true) int ddd,
                                       @RequestParam(value = "divider",required = true) int ddr)
