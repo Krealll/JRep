@@ -4,6 +4,7 @@ package com.krealll.restservice.controller;
 import com.krealll.restservice.application.exceptions.BadArgumentsException;
 import com.krealll.restservice.application.exceptions.MethodNotSupportedException;
 import com.krealll.restservice.application.exceptions.ServerException;
+import com.krealll.restservice.service.Counter;
 import com.krealll.restservice.service.DivisionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,9 @@ public class DivisionController {
             throws BadArgumentsException, ServerException {
         return new ResponseEntity<>(service.formResponse(ddd,ddr), HttpStatus.OK);
     }
+
+    @GetMapping("/GetCounter")
+    public ResponseEntity<?> getRequestCounter(){return new ResponseEntity(service.getRequestCounter(),HttpStatus.OK);}
 
     @GetMapping()
     public String greeting(){

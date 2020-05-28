@@ -13,7 +13,8 @@ public class DivisionService  {
     private static Logger logger = LogManager.getLogger(MethodNotSupportedExceptionHandler.class);
     @Autowired
     DivisionCacher<DivisionResult> cacher;
-
+    @Autowired
+    Counter RequestCounter;
 
     public DivisionResult getDivisionResult(int dividend, int divider){
         return new DivisionResult(calculateQuotient(dividend,divider), calculateReminder(dividend,divider));
@@ -21,6 +22,7 @@ public class DivisionService  {
 
     public DivisionResult formResponse(int dividend, int divider){
         Validator.validate(dividend,divider);
+        RequestCounter.increment();
         logger.info("Successful division:dividend {} divider {}",dividend,divider);
         return cacheData(dividend,divider);
     }
@@ -40,4 +42,7 @@ public class DivisionService  {
         return dividend%divider;
     }
 
+    public int getRequestCounter() {
+        return RequestCounter.getCounter();
+    }
 }
