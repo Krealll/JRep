@@ -2,12 +2,7 @@ package com.krealll.tasks;
 
 public class TaskManager {
     public static void main(String[] args) {
-        runTasks();
-    }
-
-
-    public static void runTasks(){
-        try {
+       try {
             System.out.println("Stop value is 0");
             System.out.println("Task1");
             Task1 task1 = new Task1();
@@ -44,7 +39,6 @@ public class TaskManager {
             System.out.println(e.getMessage());
         }
     }
-
 
 
 
